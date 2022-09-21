@@ -1,0 +1,30 @@
+---
+- hosts: test
+  gather_facts: False
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo 
+  
+  tasks:
+#     - name: tomcat stop
+#       service: 
+#         name: tomcat
+#         state: stopped
+
+    - name: tomcat stop
+      shell: /opt/tomcat/bin/shutdown.sh
+      
+    - name: delete old war
+      file: 
+        path: /opt/tomcat/webapps/*
+        state: absent
+        
+    - name: copying war file
+      copy: 
+        src: ./target/vprofile-v1.war
+        dest: /opt/tomcat/webapps
+        
+    - name: tomcat start
+      service: 
+        name: tomcat
+        state: started
